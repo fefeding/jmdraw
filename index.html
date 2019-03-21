@@ -1,0 +1,127 @@
+<!doctype html>
+<html>
+
+<head>
+	<meta content="text/html; charset=UTF-8" http-equiv="content-type" />
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+	<!-- 最新版本的 Bootstrap 核心 CSS 文件 
+<link rel="stylesheet" href="//cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">-->
+
+	<!-- 可选的 Bootstrap 主题文件（一般不用引入）
+<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+ -->
+	<!-- 最新的 Bootstrap 核心 JavaScript 文件
+<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+ -->
+	<link rel="stylesheet" href="css/editor.css" />
+	<style>
+		.hide {
+			display: none;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="clearfix main-container">
+		<div class="component-container js-comonent-container">
+			<div class="component-header js-component-header">基本流程图</div>
+			<div class="component-inner js-component-inner">
+				<ul class="clearfix">
+				</ul>
+			</div>
+		</div>
+		<div class="canvas-container js-editor-container"></div>
+	</div>
+	<script type="text/javascript" src="lib/jquery-3.3.1.min.js"></script>
+	<!--[if lt IE 10]> <script type="text/javascript" src="lib/polyfill.min.js" ></script><![endif]-->
+	<!--<script type="text/javascript" src="../jmgraph/dist/jmGraph.min.js"></script>
+<script type="text/javascript" src="//cdn.jm47.com/jmgraph/dist/jmGraph.min.js"></script>
+<script type="text/javascript" src="//cdn.jm47.com/jmdraw/js/jmDraw.js"></script>
+<script type="text/javascript" src="//cdn.jm47.com/jmdraw/js/jmElement.js"></script>
+<script type="text/javascript" src="//cdn.jm47.com/jmdraw/js/shapes/baseFlow.js"></script>
+<script type="text/javascript" src="//cdn.jm47.com/jmdraw/js/defaultStyle.js"></script>-->
+
+	<script type="text/javascript" src="http://graph.jm47.com/dist/jmGraph.min.js"></script>
+	<script type="text/javascript" src="js/jmDraw.js"></script>
+	<script type="text/javascript" src="js/jmElement.js"></script>
+	<script type="text/javascript" src="js/shapes/baseFlow.js"></script>
+	<script type="text/javascript" src="js/shapes/arrowLine.js"></script>
+	<script type="text/javascript" src="js/defaultStyle.js"></script>
+	<!--<script type="text/javascript" src="js/images.js" ></script>-->
+	<script type="text/javascript">
+
+		$(function () {
+			var container = $('.canvas-container');
+			//初始化编辑器
+			jmDraw({
+				container: container[0],
+				width: Math.max($(window).width() - 250, 600),
+				height: Math.max($(window).height() - 100, 400),
+				enabled: true,//可以编辑
+				connectable: true,//可以连线
+				movable: true,//可以移动元素
+				resizable: true//可以改变元素大小
+			}).then(init);
+
+			//setTimeout(resize, 100);
+		});
+
+
+		function init(editor) {
+			var comHtml = '';
+			//初始组件
+			for (var k in jmDraw.shapeTypes) {
+				var t = jmDraw.shapeTypes[k];
+				if (t && t.ico) {
+					comHtml += '<li class="component">' +
+						'<div class="component-img js-com-img" draggable="true" data-type="' + k + '"><img src="' + t.ico + '"/></div>' +
+						'<p class="component-name">' + t.nickName + '</p>' +
+						'</li>';
+				}
+			}
+			$('.js-comonent-container ul').html(comHtml);
+			bindEvent(editor);
+		}
+
+		//绑定事件
+		function bindEvent(editor) {
+			//$(window).resize(resize);
+
+			//拖放组件
+			$('.js-comonent-container ul').on('dragstart', '.js-com-img', function (e) {
+				var typdname = $(this).attr('data-type');
+				e.originalEvent.dataTransfer.setData("text", typdname);
+				var img = $(this).find('img');
+				e.originalEvent.dataTransfer.setDragImage && e.originalEvent.dataTransfer.setDragImage(img[0], img.width / 2, img.height / 2);
+			});
+
+			$('.js-editor-container').on('dragover', 'canvas', function (e) {
+				e.preventDefault();
+			}).on('drop', 'canvas', function (e) {
+				e.preventDefault();
+				var typdname = e.originalEvent.dataTransfer.getData("text");
+				if (typdname) {
+					var cell = editor.addCell(typdname, {
+						position: { x: e.offsetX, y: e.offsetY }
+					});
+					cell.position.x = e.offsetX - cell.width / 2;
+					cell.position.y = e.offsetY - cell.height / 2;
+				}
+			});
+		}
+
+		//重置区域大小
+		function resize() {
+			var component = $('.js-comonent-container');
+			var editor = $('.js-editor-container');
+			editor.width($(window).width() - component.width() - 40);
+			var wheight = $(window).height() - 20;
+			component.height(wheight);
+			editor.height(wheight);
+
+			$('.js-component-inner').height(wheight - $('.js-component-header').innerHeight() - 1);
+		}
+	</script>
+</body>
+
+</html>
