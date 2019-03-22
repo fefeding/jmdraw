@@ -1,0 +1,25 @@
+{
+  "name": "jmdraw",
+  "version": "1.0.0",
+  "description": "流程图库",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jiamao/jmdraw.git"
+  },
+  "author": "jiamao <haofefe@163.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jiamao/jmdraw/issues"
+  },
+  "homepage": "https://github.com/jiamao/jmdraw#readme",
+  "dependencies": {
+    "jmgraph": "^3.0.1"
+  }
+}
