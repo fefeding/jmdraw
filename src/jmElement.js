@@ -1,56 +1,24 @@
 
+import { jmControl, jmUtils } from "../node_modules/jmgraph/dist/jmgraph.es6.js";
+import { defaultStyle } from "./defaultStyle.js";
+
 /**
  * 流程编辑器单元,继承自jmControl
- * 参数说明:resizable=是否可改变大小，connectable=是否可连线,value =当前显示字符串,position=单元位置,editor=当前单元所属编辑器,graph=画布,style=样式对象或名称
  * 
- * @class jmDraw
+ * @class jmElement
  * @for jmDraw
- * @module jmDraw
- * @param {object} option 参数
+ * @extends jmControl
+ * @param {object} option 参数说明:resizable=是否可改变大小，
+ * connectable=是否可连线,
+ * value =当前显示字符串,
+ * position=单元位置,
+ * style=样式对象或名称
  */
-
-jmDraw.jmElement = function(option) {	
-
-	if(option) this.init(option);
-
-	this.type = this.type||'jmElement';
-}
-
-/**
- * 初始化组件
- *
- */
-jmDraw.jmElement.prototype.init = function(option) {
-	//继承属性绑定
-	jmUtils.extend(this, new jmControl(option.graph, option));
-
-	this.option = option;			
-	
-	this.text(option.text || '');
-	this.graph = option.graph;
-	this.editor = option.editor;		
-	//this.styleName = option.styleName;	
-	//初始化为默认样式
-	this.style = this.style||option.style||jmUtils.clone(this.editor.defaultStyle.cell);		
-	this.setStyleName(this.styleName);
-	option.position = option.position || {x:0,y:0};
-
-	//如果从样式中取大小，则重新定位
-	if(option.width) {
-		this.width = option.width;
+ class jmElement extends jmControl {
+	constructor(option) {
+		super(option);
+		this.init(option);
 	}
-	else if(this.style.width) {
-		this.width = this.style.width;
-		option.position.x -= this.style.width / 2;
-	}
-	if(option.height) {
-		this.height = option.height;
-	}
-	else if(this.style.height) {
-		this.height = this.style.height;
-		option.position.y -= this.style.height / 2;
-	}
-	this.position = option.position;	
 
 	/**
 	 * 当前元素是否已被选择
@@ -58,74 +26,132 @@ jmDraw.jmElement.prototype.init = function(option) {
 	 * @property selected
 	 * @type boolean
 	 */
-	this.selected = false;
-	this.initializing(this.graph.context,this.style);
-	//已option参数为准
-	if(typeof option.resizable != 'undefined') {
-		this.resizable = option.resizable;
-	}
-	else if(typeof this.style.resizable != 'undefined') {
-		this.resizable = this.style.resizable;			
-	}
-	
-	if(typeof option.connectable != 'undefined') {
-		this.connectable = option.connectable;
-	}
-	else if(typeof this.style.connectable != 'undefined') {
-		this.connectable = this.style.connectable;			
-	}	
-	else {
-		this.connectable = this.editor.connectable;
-	}	
+	selected = false;
 
-	this.create();
-}
-
-/**
- * 初始化当前元素样式
- *
- * @method setStyleName
- * @for jmElement
- * @param {object} style 样式
- */
-jmDraw.jmElement.prototype.setStyleName = function(style) {
-	if(style) {
-		var mpstyle = this.editor.styles[style]
-		 if(mpstyle) {
-		 	this.styleName = style;
-		 	if(typeof this.style == 'object') {
-		 		this.style = jmUtils.extend(this.style, mpstyle);
-		 	}
-		 	else {
-			 	this.style = jmUtils.clone(mpstyle, true);
-			 }
-		 }
-		 else {
-		 	//如果设置为一个对象，则把属性继承过来即可
-		 	if(typeof this.style == 'object') {
-		 		if(typeof style == 'object') {
-		 			this.style = jmUtils.extend(this.style, style);
-		 		}
-		 	}
-		 	else {
-			 	this.style = jmUtils.clone(style, true);
-			}
-		 	mpstyle = style;
-		 }
-		if(typeof this.style.resizable != 'undefined') {
-			this.resizable = this.style.resizable;	
-		}
-		this.style.zIndex = this.style.zIndex || 1000;
-		this.style.padding = this.style.padding || {left:8,top:8,right:8,bottom:8};
+	/**
+	 * 当前控件显示的文本
+	 *
+	 * @property text
+	 * @type {string} 
+	 */
+	get text() {
 		if(this.label) {
-			this.label.style = this.style.label;
-		}
-		if(this.shape) {
-			mpstyle.zIndex = 0;
-			this.shape.style = mpstyle;
+			return this.label.text;
 		}
 	}
-}
+	set text(v) {
+		if(this.label) {
+			return this.label.text = v;
+		}
+	}
+
+	/**
+	 * 初始化组件
+	 *
+	 */
+	init(option) {
+
+		this.option = option;			
+		
+		this.text = option.text || '';
+		this.editor = option.editor;		
+		//this.styleName = option.styleName;	
+		//初始化为默认样式
+		this.style = this.style || option.style || jmUtils.clone(defaultStyle);	
+
+		this.setStyleName(this.styleName);
+
+		option.position = option.position || {x:0,y:0};
+
+		//如果从样式中取大小，则重新定位
+		if(option.width) {
+			this.width = option.width;
+		}
+		else if(this.style.width) {
+			this.width = this.style.width;
+			option.position.x -= this.style.width / 2;
+		}
+		if(option.height) {
+			this.height = option.height;
+		}
+		else if(this.style.height) {
+			this.height = this.style.height;
+			option.position.y -= this.style.height / 2;
+		}
+		this.position = option.position;
+		
+		this.selected = false;
+		//已option参数为准
+		if(typeof option.resizable != 'undefined') {
+			this.resizable = option.resizable;
+		}
+		else if(typeof this.style.resizable != 'undefined') {
+			this.resizable = this.style.resizable;			
+		}
+		
+		if(typeof option.connectable != 'undefined') {
+			this.connectable = option.connectable;
+		}
+		else if(typeof this.style.connectable != 'undefined') {
+			this.connectable = this.style.connectable;			
+		}	
+		else {
+			this.connectable = this.editor.connectable;
+		}	
+
+		this.create();
+	}
+
+	/**
+	 * 初始化当前元素样式
+	 *
+	 * @method setStyleName
+	 * @for jmElement
+	 * @param {object} style 样式
+	 */
+	setStyleName(style) {
+		if(style) {
+			var mpstyle = this.editor.styles[style]
+			if(mpstyle) {
+				this.styleName = style;
+				if(typeof this.style == 'object') {
+					this.style = jmUtils.extend(this.style, mpstyle);
+				}
+				else {
+					this.style = jmUtils.clone(mpstyle, true);
+				}
+			}
+			else {
+				//如果设置为一个对象，则把属性继承过来即可
+				if(typeof this.style == 'object') {
+					if(typeof style == 'object') {
+						this.style = jmUtils.extend(this.style, style);
+					}
+				}
+				else {
+					this.style = jmUtils.clone(style, true);
+				}
+				mpstyle = style;
+			}
+			if(typeof this.style.resizable != 'undefined') {
+				this.resizable = this.style.resizable;	
+			}
+			this.style.zIndex = this.style.zIndex || 1000;
+			this.style.padding = this.style.padding || {left:8,top:8,right:8,bottom:8};
+			if(this.label) {
+				this.label.style = this.style.label;
+			}
+			if(this.shape) {
+				mpstyle.zIndex = 0;
+				this.shape.style = mpstyle;
+			}
+		}
+	}
+ }
+
+
+
+
 
 /**
  * 生成节点元素
@@ -542,35 +568,7 @@ jmDraw.jmElement.prototype.connect = function(to,id,txt) {
 	}
 }
 
-/**
- * 返回或设置当前元素的值 
- *
- * @method text
- * @for jmElement
- * @param {string} [v] 元素显示的值
- * @return {string} 当前的值
- */
-jmDraw.jmElement.prototype.text = function(v) {
-	if(typeof v !== 'undefined') {
-		if(this.label) {
-			this.label.text = v;
-		}
-		return this.setValue('text',v);
-	}
-	return this.getValue('text');
-}
 
-/**
- * 设定或获取中心点
- * 
- * @method center
- * @for jmHArc
- * @param {point} p 中心点坐标
- * @return {point} 当前中心点坐标
- */
-jmDraw.jmElement.prototype.center = function(p) {
-	return this.setValue('center',p);
-}
 
 /**
  * 从编辑器中移除当前节点
