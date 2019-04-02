@@ -134,4 +134,4 @@ static class defaultStyle {
 	}
 };
 
-export { defaultStyle };
+export default defaultStyle;

@@ -1,121 +1,112 @@
 
+import jmProperty from "jmgraph/src/common/jmProperty.js";
+import jmGraph from "jmgraph/src/jmGraph.js";
+
 /**
  * jm流程图编辑器
  * 继承jmProperty
  * option参数:connectable=是否可连线，enabled=是否可编辑
  *
  * @class jmDraw
- * @module jmDraw
  * @param {object} option 流程图参数
  * @param {function} callback 初始化后的回调
  */
-function jmDraw(option, callback) {
-	if(option.container) {		
-		if(this instanceof jmDraw) {
-			if(typeof option.container === 'string') {
-				option.container = document.getElementById(option.container);
-			} 
-			this.option = option;
-			/**
-			 * 当前所有样式集合
-			 *
-			 * @property styles
-			 * @type object
-			 * @for jmDraw
-			 */
-			this.styles = {};
+class jmDraw extends jmProperty {
+	constructor(option) {
+		super();
+		init(option);
+	}
 
-			/**
-			 * 当前类型标识
-			 *
-			 * @property type
-			 * @type string
-			 * @for jmDraw
-			 */
-			this.type = 'jmDraw';
-			//是否可编辑
-			if(typeof option.enabled === 'undefined') option.enabled = true;
-			this.isEnabled(option.enabled);
-			/**
-			 * 是否可连线
-			 *
-			 * @property connectable
-			 * @type boolean
-			 * @for jmDraw
-			 */
-			this.connectable = option.connectable === false?false:true;
-			/**
-			 * 是否移动节点
-			 *
-			 * @property movable
-			 * @type boolean
-			 * @for jmDraw
-			 */
-			this.movable = option.movable === false?false:true;
+	init(option) {
+		if(typeof option.container === 'string') {
+			option.container = document.getElementById(option.container);
+		} 
+		this.option = option;
+		/**
+		 * 当前所有样式集合
+		 *
+		 * @property styles
+		 * @type object
+		 */
+		this.styles = {};
 
-			if(option.container.tagName != 'CANVAS') {
-				this.container = document.createElement('div');
-				this.container.style.position = 'relative';
-				this.container.style.padding = '0';
-				this.container.style.margin = '0';
-				this.container.style.width = '100%';
-				this.container.style.height = '100%';
-				option.container.appendChild(this.container);
-			}			
-			else {
-				this.container = option.container.parentElement;
-				canvas = option.container;
-			}
-			var self = this;
-			//初始化jmGraph对象
-			jmGraph(this.container, option).then(function(graph){
-				self.graph = graph;
-				/**
-				 * 当前画布所有节点元素
-				 *
-				 * @property cells
-				 * @type list
-				 * @for jmDraw
-				 */
-				self.cells = new jmUtils.list();
-	
-				/**
-				 * 当前画布所有连线集合
-				 *
-				 * @property connects
-				 * @type list
-				 * @for jmDraw
-				 */
-				self.connects = new jmUtils.list();
-	
-				jmUtils.extend(self,new jmProperty());//继承属性绑定
-				//生成框选对象
-				self.selectRect = self.graph.createShape('rect',{style:self.defaultStyle.selectRect});	
-				self.selectRect.visible = false;
-				self.graph.children.add(self.selectRect);		
-				//self.graph.registerShape('cellConnectLine',jmConnectLine);		
-				self.initEvents();//绑定基础事件
-	
-				self.graph.autoRefresh();//自动刷新
-	
-				callback && callback(self);
-			}, function(){
-				//加载失败
-				callback && callback(null);
-			});	
-		}
+		//是否可编辑
+		if(typeof option.enabled === 'undefined') option.enabled = true;
+		this.enabled = option.enabled;
+		
+		this.movable = option.movable === false? false: true;
+
+		this.shapeTypes = {};
+
+		if(option.container.tagName != 'CANVAS') {
+			this.container = document.createElement('div');
+			this.container.style.position = 'relative';
+			this.container.style.padding = '0';
+			this.container.style.margin = '0';
+			this.container.style.width = '100%';
+			this.container.style.height = '100%';
+			option.container.appendChild(this.container);
+		}			
 		else {
-			return new Promise(function(resolve, reject){
-				new jmDraw(option, function(editor){
-					if(editor) resolve && resolve(editor);
-					else reject && reject();
-				});
-			});
-		}	
+			this.container = option.container.parentElement;
+			canvas = option.container;
+		}
+
+		self.graph = graph;
+		/**
+		 * 当前画布所有节点元素
+		 *
+		 * @property cells
+		 * @type list
+		 * @for jmDraw
+		 */
+		self.cells = new jmUtils.list();
+
+		/**
+		 * 当前画布所有连线集合
+		 *
+		 * @property connects
+		 * @type list
+		 * @for jmDraw
+		 */
+		self.connects = new jmUtils.list();
+
+		jmUtils.extend(self,new jmProperty());//继承属性绑定
+		//生成框选对象
+		self.selectRect = self.graph.createShape('rect',{style:self.defaultStyle.selectRect});	
+		self.selectRect.visible = false;
+		self.graph.children.add(self.selectRect);		
+		//self.graph.registerShape('cellConnectLine',jmConnectLine);		
+		self.initEvents();//绑定基础事件
+
+		self.graph.autoRefresh();//自动刷新
+	}
+
+	/**
+	 * 是否可编辑
+	 * @property enabled
+	 * @type {boolean}
+	 */
+	get enabled() {
+		return this.__pro('enabled');
+	}
+	set enabled(v) {
+		return this.__pro('enabled', v);
+	}
+
+	/**
+	 * 是否移动节点
+	 *
+	 * @property movable
+	 * @type boolean
+	 */
+	get movable() {
+		return this.__pro('movable');
+	}
+	set movable(v) {
+		return this.__pro('movable', v);
 	}
 }
-//初始化所有图型的集合
-jmDraw.shapeTypes = {};
 
 /**
  * 编辑器的右健菜单
