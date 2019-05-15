@@ -1,5 +1,5 @@
 
-import jmProperty from "jmgraph/src/common/jmProperty.js";
+import { jmProperty } from "jmgraph/src/common/jmProperty.js";
 import jmGraph from "jmgraph/src/jmGraph.js";
 
 import defaultStyle from "./defaultStyle.js";
@@ -938,3 +938,5 @@ jmDraw.prototype.menus = function() {
 	this.menuBody.container.innerHTML = '';
 	return this.menuBody;
 }
+
+export default jmDraw;
