@@ -33,21 +33,9 @@
 		<div class="canvas-container js-editor-container"></div>
 	</div>
 	<script type="text/javascript" src="lib/jquery-3.3.1.min.js"></script>
-	<!--[if lt IE 10]> <script type="text/javascript" src="lib/polyfill.min.js" ></script><![endif]-->
-	<!--<script type="text/javascript" src="../jmgraph/dist/jmGraph.min.js"></script>
-<script type="text/javascript" src="//cdn.jm47.com/jmgraph/dist/jmGraph.min.js"></script>
-<script type="text/javascript" src="//cdn.jm47.com/jmdraw/js/jmDraw.js"></script>
-<script type="text/javascript" src="//cdn.jm47.com/jmdraw/js/jmElement.js"></script>
-<script type="text/javascript" src="//cdn.jm47.com/jmdraw/js/shapes/baseFlow.js"></script>
-<script type="text/javascript" src="//cdn.jm47.com/jmdraw/js/defaultStyle.js"></script>-->
 
-	<script type="module" src="../src/jmDraw.js"></script>
-	<script type="text/javascript" src="../src/jmElement.js"></script>
-	<script type="text/javascript" src="../src/shapes/baseFlow.js"></script>
-	<script type="text/javascript" src="../src/shapes/arrowLine.js"></script>
-	<script type="text/javascript" src="../src/defaultStyle.js"></script>
-	<!--<script type="text/javascript" src="js/images.js" ></script>-->
 	<script type="module">
+		import jmDraw from '../src/jmDraw.js';
 
 		$(function () {
 			var container = $('.canvas-container');

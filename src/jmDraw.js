@@ -1,6 +1,6 @@
 
-import { jmProperty } from "jmgraph/src/common/jmProperty.js";
-import jmGraph from "jmgraph/src/jmGraph.js";
+import { jmProperty } from "../lib/jmgraph/src/common/jmProperty.js";
+import jmGraph from "../lib/jmgraph/src/jmGraph.js";
 
 import defaultStyle from "./defaultStyle.js";
 
@@ -821,7 +821,7 @@ class jmDraw extends jmProperty {
 	 * @param {string/object} json 描述json
 	 * @param {boolean} [s=false] 当前恢复是否记录状态 true表示记录，false不记录
 	 */
-	jmDraw.prototype.fromJSON = function(json,s) {
+	fromJSON(json,s) {
 		if(!json) return;
 		if(typeof json === 'string') {
 			json = JSON.parse(json);
@@ -858,85 +858,85 @@ class jmDraw extends jmProperty {
 			this.save();
 		}	
 	}
-}
 
-/**
- * 编辑器的右健菜单
- * 可直接对返回的对象执行操作
- *
- * @method menus
- * @for jmDraw
- * @return {object} 菜单主体对象
- */
-jmDraw.prototype.menus = function() {
-	if(!this.menuBody) {
-		var menu = this.menuBody = {};
-		this.menuBody.panel = document.createElement('div');
-		this.menuBody.panel.style.display = 'none';
-		this.menuBody.panel.className = 'editor-menu';
-		this.menuBody.container = document.createElement('ul'); 
-		this.menuBody.panel.appendChild(this.menuBody.container);
-		document.body.appendChild(this.menuBody.panel);
+	/**
+	 * 编辑器的右健菜单
+	 * 可直接对返回的对象执行操作
+	 *
+	 * @method menus
+	 * @for jmDraw
+	 * @return {object} 菜单主体对象
+	 */
+	menus() {
+		if(!this.menuBody) {
+			var menu = this.menuBody = {};
+			this.menuBody.panel = document.createElement('div');
+			this.menuBody.panel.style.display = 'none';
+			this.menuBody.panel.className = 'editor-menu';
+			this.menuBody.container = document.createElement('ul'); 
+			this.menuBody.panel.appendChild(this.menuBody.container);
+			document.body.appendChild(this.menuBody.panel);
 
-		/**
-		 * 显示当前菜单
-		 *
-		 * @method show
-		 * @for menus
-		 * @param {nubmer} [x] 菜单显示位置的X坐标
-		 * @param {nubmer} [y] 菜单显示位置的Y坐标
-		 * @return {object} 当前菜单对象 
-		 */
-		this.menuBody.show = function(x,y) {
-			this.panel.style.display = 'inline';
-			this.panel.style.position = 'absolute';
-			//如果指定了位置
-			if(x && y) {
-				this.panel.style['top'] = (y + 1) + 'px';
-				this.panel.style['left'] = (x + 1)+ 'px';
-			}
-			else {
-				var p = jmUtils.getEventPosition(event);
-				this.panel.style['top'] = (p.pageY + 1) + 'px';
-				this.panel.style['left'] = (p.pageX + 1) + 'px';
-			}
-			return this;
-		};
-		/**
-		 * 向菜单中添加项
-		 *
-		 * @method add
-		 * @for menus
-		 * @param {element/string} item 菜单项，可以是字符串或html元素
-		 * @param {function} click 当前菜单项单击事件委托
-		 */
-		this.menuBody.add = function(item,click) {
-			var mitem = document.createElement('li');
-			if(typeof item === 'string') {
-				mitem.innerHTML = item;
-			}
-			else {
-				mitem.appendChild(item);
-			}
-			mitem.onmouseup = function() {
-				if(click) {
-					click.call(this);
+			/**
+			 * 显示当前菜单
+			 *
+			 * @method show
+			 * @for menus
+			 * @param {nubmer} [x] 菜单显示位置的X坐标
+			 * @param {nubmer} [y] 菜单显示位置的Y坐标
+			 * @return {object} 当前菜单对象 
+			 */
+			this.menuBody.show = function(x,y) {
+				this.panel.style.display = 'inline';
+				this.panel.style.position = 'absolute';
+				//如果指定了位置
+				if(x && y) {
+					this.panel.style['top'] = (y + 1) + 'px';
+					this.panel.style['left'] = (x + 1)+ 'px';
 				}
-				menu.hide();
+				else {
+					var p = jmUtils.getEventPosition(event);
+					this.panel.style['top'] = (p.pageY + 1) + 'px';
+					this.panel.style['left'] = (p.pageX + 1) + 'px';
+				}
+				return this;
 			};
-			this.container.appendChild(mitem);
-			return this;
-		};
-		this.menuBody.hide = function() {
-			this.panel.style.display = 'none';
-			return this;
-		};
-		this.graph.bind('mousedown',function(evt) {
-			menu.hide();
-		});
+			/**
+			 * 向菜单中添加项
+			 *
+			 * @method add
+			 * @for menus
+			 * @param {element/string} item 菜单项，可以是字符串或html元素
+			 * @param {function} click 当前菜单项单击事件委托
+			 */
+			this.menuBody.add = function(item,click) {
+				var mitem = document.createElement('li');
+				if(typeof item === 'string') {
+					mitem.innerHTML = item;
+				}
+				else {
+					mitem.appendChild(item);
+				}
+				mitem.onmouseup = function() {
+					if(click) {
+						click.call(this);
+					}
+					menu.hide();
+				};
+				this.container.appendChild(mitem);
+				return this;
+			};
+			this.menuBody.hide = function() {
+				this.panel.style.display = 'none';
+				return this;
+			};
+			this.graph.bind('mousedown',function(evt) {
+				menu.hide();
+			});
+		}
+		this.menuBody.container.innerHTML = '';
+		return this.menuBody;
 	}
-	this.menuBody.container.innerHTML = '';
-	return this.menuBody;
 }
 
 export default jmDraw;

@@ -1,10 +1,12 @@
+'use strict';
+
 /**
  * 编辑器默认样式
  *	 
  * @class defaultStyle
  * @static
  */
-static class defaultStyle {
+class defaultStyle {
 	constructor() {
 
 	}
