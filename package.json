@@ -21,6 +21,6 @@
   },
   "homepage": "https://github.com/jiamao/jmdraw#readme",
   "dependencies": {
-    "jmgraph": "^3.0.1"
+    "jmgraph": "^3.0.6"
   }
 }
