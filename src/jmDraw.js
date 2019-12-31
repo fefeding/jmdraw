@@ -1,18 +1,20 @@
 
-import { jmGraph, jmProperty, jmList } from "../lib/jmgraph.js";
+import { jmGraph, jmControl, jmList } from "../lib/jmgraph.js";
+
+import jmElement from './jmElement.js';
 
 import defaultStyle from "./defaultStyle.js";
 
 /**
  * jm流程图编辑器
- * 继承jmProperty
+ * 继承jmControl
  * option参数:connectable=是否可连线，enabled=是否可编辑
  *
  * @class jmDraw
  * @param {object} option 流程图参数
  * @param {function} callback 初始化后的回调
  */
-class jmDraw extends jmProperty {
+class jmDraw extends jmControl {
 	constructor(option) {
 		super();
 		this.init(option);
@@ -37,7 +39,9 @@ class jmDraw extends jmProperty {
 		
 		this.movable = option.movable === false? false: true;
 
-		this.shapeTypes = {};
+		this.shapeTypes = {
+			'jmElement': jmElement
+		};
 
 		this.container = option.container;
 
@@ -136,7 +140,7 @@ class jmDraw extends jmProperty {
 		cell.on('move',function(e) {
 			//如果事件传递则处理所有已选节点位置
 			if(e.trans === true) {			
-				var cells = _this.getSelectedCells();
+				var cells = this.editor.getSelectedCells();
 				for(var i = 0; i < cells.length; i++) {
 					if(cells[i] != this) {
 						cells[i].offset(e.offsetX, e.offsetY, false);//移动但不传递 事件

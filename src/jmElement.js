@@ -1,5 +1,5 @@
-import { jmControl, jmUtils, jmList } from "../lib/jmgraph.js";
-import { defaultStyle } from "./defaultStyle.js";
+import { jmControl, jmPath, jmUtils, jmList } from "../lib/jmgraph.js";
+import defaultStyle from "./defaultStyle.js";
 
 /**
  * 流程编辑器单元,继承自jmControl
@@ -54,11 +54,11 @@ import { defaultStyle } from "./defaultStyle.js";
 		
 		this.text = option.text || '';
 		this.editor = option.editor;		
-		//this.styleName = option.styleName;	
+		
 		//初始化为默认样式
-		this.style = this.style || option.style || jmUtils.clone(defaultStyle);	
+		this.style = option.style || jmUtils.clone(defaultStyle.cell) || {};	
 
-		this.setStyleName(this.styleName);
+		this.setStyleName(option.styleName || '');
 
 		option.position = option.position || {x:0,y:0};
 
@@ -114,7 +114,7 @@ import { defaultStyle } from "./defaultStyle.js";
 			if(mpstyle) {
 				this.styleName = style;
 				if(typeof this.style == 'object') {
-					this.style = jmUtils.extend(this.style, mpstyle);
+					this.style = Object.assign(this.style, mpstyle);
 				}
 				else {
 					this.style = jmUtils.clone(mpstyle, true);
@@ -124,7 +124,7 @@ import { defaultStyle } from "./defaultStyle.js";
 				//如果设置为一个对象，则把属性继承过来即可
 				if(typeof this.style == 'object') {
 					if(typeof style == 'object') {
-						this.style = jmUtils.extend(this.style, style);
+						this.style = Object.assign(this.style, style);
 					}
 				}
 				else {
@@ -171,14 +171,14 @@ import { defaultStyle } from "./defaultStyle.js";
 						rectSize: 6,//拖放的小方块大小
 						movable:false,
 						resizable: this.resizable,
-						style: this.editor.defaultStyle.cell.resize});
+						style: this.style.resize || defaultStyle.cell.resize });
 
 			this.rect.visible = false;
 		}
 		
 		if(!this.shape) {	
 			var shapeName = this.option.shapeName || this.style.shapeName || 'rect';
-			var params = jmUtils.extend({
+			var params = Object.assign({
 				style: this.style.shape,
 				width:'100%',
 				height:'100%',
@@ -224,8 +224,9 @@ import { defaultStyle } from "./defaultStyle.js";
 			style: this.style.label,
 			width:'100%',
 			height:'100%',
-			text : this.text()
+			text : this.text
 		});
+
 		this.setStyleName(this.styleName);
 	}	
 
@@ -236,28 +237,28 @@ import { defaultStyle } from "./defaultStyle.js";
 		this.connectPoints = [];
 		//左边的连接点
 		this.connectPoints.push(
-			this.connectLeft=new this.connectPoint(this, {
+			this.connectLeft=this.connectPoint({
 				center: {x: 0, y: '50%'},
 				pos: 'left'
 			})
 		);
 		//上边的连接点
-		this.connectPoints.push(this.connectTop=new this.connectPoint(this, {
+		this.connectPoints.push(this.connectTop=this.connectPoint({
 			center: {x: '50%', y: 0},
 			pos: 'top'
 		}));
 		//右边的连接点
-		this.connectPoints.push(this.connectRight=new this.connectPoint(this, {
+		this.connectPoints.push(this.connectRight=this.connectPoint({
 			center: {x: '100%', y: '50%'},
 			pos: 'right'
 		}));
 		//下边的连接点
-		this.connectPoints.push(this.connectBottom=new this.connectPoint(this, {
+		this.connectPoints.push(this.connectBottom=this.connectPoint({
 			center: {x: '50%', y: '100%'},
 			pos: 'bottom'
 		}));
 		//中间的连接点
-		this.connectPoints.push(this.connectCenter=new this.connectPoint(this, {
+		this.connectPoints.push(this.connectCenter=this.connectPoint({
 			center: {x: '50%', y: '50%'},
 			pos: 'center'
 		}));
@@ -589,18 +590,27 @@ import { defaultStyle } from "./defaultStyle.js";
 
 	/**
 	 * 图形的连接点
-	 * @param {jmElement} el 连接点所属图形
 	 * @param {object} option 连接点参数, {center:中心, pos: 在父图形位置，left,top,right,bottom,center}
 	 */
-	connectPoint(el, option) {
-		//继承属性绑定
-		jmUtils.extend(this, new jmControl(el.graph, {style: el.style.connectPoint || el.editor.defaultStyle.cell}));
-		this.style = el.style.connectPoint || jmDraw.defaultStyle.cell.connectPoint;
-		this.graph = el.graph;
+	connectPoint(option) {
+		option.style = this.style.connectPoint || defaultStyle.cell.connectPoint;
+		
+		const p = new connectPoint(option);
+		//加到父图形中
+		this.children.add(p);	
+		return p;	
+	}
+ }
 
-		this.initializing(this.graph.context,this.style);
+ class connectPoint extends jmControl {
+	constructor(params) {
+		super(params, 'jmConnectPoint');
+		this.init(params);
+	}	
 
-		this.type = 'jmConnectPoint';//表明是元素的连接点
+	 init(option) {		
+
+		this.initializing();
 
 		//所处位置	
 		this.pos = option.pos;
@@ -613,7 +623,7 @@ import { defaultStyle } from "./defaultStyle.js";
 		//isAbsolute是否为获取对画布的绝对路径
 		//chkRotate是否计算旋转
 		this.getCenter = function(isAbsolute, chkRotate) {
-			var c = this.center()||{x:0,y:0};
+			var c = this.center ||{x:0,y:0};
 			var cx = c.x;
 			var cy = c.y;
 
@@ -659,17 +669,12 @@ import { defaultStyle } from "./defaultStyle.js";
 			this.points[3].y = this.points[2].y;
 		}
 
-		//当前点中心位置
-		this.center = function(p) {
-			return this.setValue('center',p);
-		}
-
 		if(option.center) {
-			this.center(option.center);
+			this.center = option.center;
 		}
 
 		//中间的X图形
-		this.xShape = this.graph.createShape('path', {style: this.style.xShape, points:[]});
+		this.xShape = new jmPath({style: this.style.xShape, points:[]});
 		//生成X图形
 		this.xShape.initPoints = function(){
 			return this.points = [{
@@ -689,7 +694,7 @@ import { defaultStyle } from "./defaultStyle.js";
 		this.children.add(this.xShape);
 
 		//连上的当前可连接指示图形
-		this.sideShape = this.graph.createShape('path', {style: this.style.sideShape, points:[]});
+		this.sideShape = new jmPath({style: this.style.sideShape, points:[]});
 		//生成指示图形坐标
 		this.sideShape.initPoints = function(){
 			return this.points = [
@@ -709,9 +714,20 @@ import { defaultStyle } from "./defaultStyle.js";
 		}
 		this.sideShape.visible = false;//对焦图形默认是不显示的
 		this.children.add(this.sideShape);
+	 }
 
-		//加到父图形中
-		el.children.add(this);
+	 /**
+	 * 中心点
+	 * point格式：{x:0,y:0,m:true}
+	 * @property center
+	 * @type {point}
+	 */
+	get center() {
+		return this.__pro('center');
+	}
+	set center(v) {
+		this.needUpdate = true;
+		return this.__pro('center', v);
 	}
  }
 

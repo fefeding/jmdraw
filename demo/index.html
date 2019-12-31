@@ -57,8 +57,8 @@
 		function init(editor) {
 			var comHtml = '';
 			//初始组件
-			for (var k in jmDraw.shapeTypes) {
-				var t = jmDraw.shapeTypes[k];
+			for (var k in editor.shapeTypes) {
+				var t = editor.shapeTypes[k];
 				if (t && t.ico) {
 					comHtml += '<li class="component">' +
 						'<div class="component-img js-com-img" draggable="true" data-type="' + k + '"><img src="' + t.ico + '"/></div>' +
@@ -68,6 +68,13 @@
 			}
 			$('.js-comonent-container ul').html(comHtml);
 			bindEvent(editor);
+
+			editor.addCell('jmElement', {
+				position: {x: 0, y: 0},
+				width: 100,
+				height: 100,
+				text: 'test'
+			});
 		}
 
 		//绑定事件
