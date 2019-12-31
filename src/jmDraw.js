@@ -1,6 +1,5 @@
 
-import { jmProperty } from "../lib/jmgraph/src/common/jmProperty.js";
-import jmGraph from "../lib/jmgraph/src/jmGraph.js";
+import { jmGraph, jmProperty, jmList } from "../lib/jmgraph.js";
 
 import defaultStyle from "./defaultStyle.js";
 
@@ -40,26 +39,14 @@ class jmDraw extends jmProperty {
 
 		this.shapeTypes = {};
 
-		if(option.container.tagName != 'CANVAS') {
-			this.container = document.createElement('div');
-			this.container.style.position = 'relative';
-			this.container.style.padding = '0';
-			this.container.style.margin = '0';
-			this.container.style.width = '100%';
-			this.container.style.height = '100%';
-			option.container.appendChild(this.container);
-		}			
-		else {
-			this.container = option.container.parentElement;
-			canvas = option.container;
-		}
+		this.container = option.container;
 
 		/**
 		 * 画图组件jmGraph实例
 		 * @property graph
 		 * @type jmGraph
 		 */
-		this.graph = jmGraph.create(canvas, this.option);
+		this.graph = jmGraph.create(this.container, this.option);
 
 		/**
 		 * 当前画布所有节点元素
@@ -67,7 +54,7 @@ class jmDraw extends jmProperty {
 		 * @property cells
 		 * @type list
 		 */
-		this.cells = new this.graph.util.list();
+		this.cells = new jmList();
 
 		/**
 		 * 当前画布所有连线集合
@@ -75,7 +62,7 @@ class jmDraw extends jmProperty {
 		 * @property connects
 		 * @type list
 		 */
-		this.connects = new this.graph.util.list();
+		this.connects = new jmList();
 
 		//生成框选对象
 		this.selectRect = this.graph.createShape('rect', {
@@ -118,11 +105,11 @@ class jmDraw extends jmProperty {
 	 * 添加元素节点,并监听其选择事件
 	 *
 	 * @method addCell
-	 * @param {string} shapeType 图型类型名
+	 * @param {string|jmElement} shapeType 图型类型名或自定义元素对象
 	 * @param {object} option 元素参数，主要为jmcell的参数
 	 */
 	addCell(shapeType, option) {			
-		var st = this.shapeTypes[shapeType];
+		var st = this.shapeTypes[shapeType] || shapeType;
 		if(!st) {
 			console.error && console.error(shapeType+' 图形不存在');
 			return;
@@ -133,11 +120,6 @@ class jmDraw extends jmProperty {
 		option.editor = this;
 		if(!this.enabled || this.option.resizable === false) {
 			option.resizable = false;
-		}
-		//如果有指定默认大小，则采用
-		if(st.defaultSize) {
-			if(!option.width && st.defaultSize.width) option.width = st.defaultSize.width;
-			if(!option.height && st.defaultSize.height) option.height = st.defaultSize.height;
 		}
 
 		var cell = new st(option);
@@ -180,10 +162,10 @@ class jmDraw extends jmProperty {
 	maxId() {
 		let id = 0;
 		this.cells.each(function(i,cell) {
-			id = Math.max(cell.id,id);
+			id = Math.max(cell.id, id);
 		});
 		this.connects.each(function(i,cn) {
-			id = Math.max(cn.id,id);
+			id = Math.max(cn.id, id);
 		});
 		return id + 1;
 	}

@@ -6,30 +6,28 @@
  * @class defaultStyle
  * @static
  */
-class defaultStyle {
-	constructor() {
-
-	}
+const defaultStyle = {	
 	/**
 	 * 拖放连线的样式
 	 *
 	 * @property dragLine
 	 * @type object
 	 */
-	static dragLine = {
+	dragLine: {
 		stroke:'rgb(59,111,41)',
         lineWidth:1,
         lineType: "dotted",
         dashLength :6,
         zIndex:10000
-	}
+	},
+
 	/**
 	 * 元素默认样式
 	 *
 	 * @property cell
 	 * @type object
 	 */
-	static cell = {
+	cell: {
 		resize : {
 			stroke : 'rgb(0,255,0)',
 			fill:'transparent',
@@ -73,14 +71,14 @@ class defaultStyle {
 	   		fill: 'transparent'
 	   },
 	   fill: 'transparent'
-	}
+	},
 	/**
 	 * 连线样式
 	 *
 	 * @property line
 	 * @type object
 	 */
-	static line = {
+	line: {
 		stroke : '#3B3B3B',
 		overStroke : 'red' ,
 		close: false,
@@ -105,7 +103,7 @@ class defaultStyle {
 				stroke: '#E75C00'
 			}
 		}
-	}
+	},
 
 	/**
 	 * 编辑器字符样式
@@ -113,13 +111,13 @@ class defaultStyle {
 	 * @property font
 	 * @type object
 	 */
-	static font = {
+	font: {
 		textAlign : 'center',
 		'textBaseline' : 'middle',
 		fill : "blue",
 		font : '20px Arial',
 		border : null
-	}
+	},
 
 	/**
 	 * 选择元素边框样式
@@ -127,7 +125,7 @@ class defaultStyle {
 	 * @property selectRect
 	 * @type object
 	 */
-	static selectRect = {
+	selectRect: {
 		stroke : 'rgb(0,0,0)',
 		lineWidth: 0.8,
 		zIndex : 100000,

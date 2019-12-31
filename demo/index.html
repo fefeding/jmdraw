@@ -37,10 +37,11 @@
 	<script type="module">
 		import jmDraw from '../src/jmDraw.js';
 
+
 		$(function () {
 			var container = $('.canvas-container');
 			//初始化编辑器
-			jmDraw({
+			var drawInstance = new jmDraw({
 				container: container[0],
 				width: Math.max($(window).width() - 250, 600),
 				height: Math.max($(window).height() - 100, 400),
@@ -48,9 +49,8 @@
 				connectable: true,//可以连线
 				movable: true,//可以移动元素
 				resizable: true//可以改变元素大小
-			}).then(init);
-
-			//setTimeout(resize, 100);
+			});
+			init(drawInstance);
 		});
 
 
@@ -95,6 +95,9 @@
 					cell.position.y = e.offsetY - cell.height / 2;
 				}
 			});
+		}
+
+		function initComponents() {
 		}
 
 		//重置区域大小

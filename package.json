@@ -1,6 +1,6 @@
 {
   "name": "jmdraw",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "流程图库",
   "main": "index.js",
   "directories": {
