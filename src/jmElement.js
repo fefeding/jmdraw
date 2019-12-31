@@ -178,13 +178,13 @@ import defaultStyle from "./defaultStyle.js";
 		
 		if(!this.shape) {	
 			var shapeName = this.option.shapeName || this.style.shapeName || 'rect';
-			var params = Object.assign({
+			var params = {
 				style: this.style.shape,
 				width:'100%',
 				height:'100%',
-				center: this.center,
-				position:{x:0,y:0}
-			}, this.option);
+				//center: this.center,
+				position:{x: 0, y: 0}
+			};
 			this.shape = this.graph.createShape(shapeName, params);	
 		}
 
