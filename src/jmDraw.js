@@ -1,7 +1,7 @@
 
 import { jmGraph, jmControl, jmList } from "../lib/jmgraph.js";
 
-import jmElement from './jmElement.js';
+import jmElement from './shapes/jmElement.js';
 
 import defaultStyle from "./defaultStyle.js";
 
@@ -109,12 +109,19 @@ class jmDraw extends jmControl {
 	 * 添加元素节点,并监听其选择事件
 	 *
 	 * @method addCell
-	 * @param {string|jmElement} shapeType 图型类型名或自定义元素对象
+	 * @param {string|jmElement|{type:jmElement, option: {}}} shapeType 图型类型名或自定义元素对象
 	 * @param {object} option 元素参数，主要为jmcell的参数
 	 */
-	addCell(shapeType, option) {			
-		var st = this.shapeTypes[shapeType] || shapeType;
-		if(!st) {
+	addCell(shapeType, option) {
+		let cellType;	
+		if(typeof shapeType === 'object') {
+			cellType = this.shapeTypes[shapeType.type] || shapeType.type;
+			option = shapeType.option || option || {};
+		}
+		else {		
+			cellType = this.shapeTypes[shapeType] || shapeType;
+		}
+		if(!cellType) {
 			console.error && console.error(shapeType+' 图形不存在');
 			return;
 		}
@@ -126,7 +133,7 @@ class jmDraw extends jmControl {
 			option.resizable = false;
 		}
 
-		var cell = new st(option);
+		var cell = new cellType(option);
 		//如果已设定校验节点，则需通过校验才可添加
 		if(this.validCell && !this.validCell(cell)) {
 			return;

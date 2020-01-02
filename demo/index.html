@@ -36,12 +36,19 @@
 
 	<script type="module">
 		import jmDraw from '../src/jmDraw.js';
-
+		import jmElement from '../src/shapes/jmElement.js';
+		import jmProcess from '../src/shapes/process.js';
+		import jmCard from '../src/shapes/card.js';
+		import jmCyclelimit from '../src/shapes/cyclelimit.js';
+		import jmData from '../src/shapes/data.js';
+		import jmContent from '../src/shapes/content.js';
+		import jmDB from '../src/shapes/db.js';
+		import jmDelay from '../src/shapes/delay.js';
 
 		$(function () {
-			var container = $('.canvas-container');
+			const container = $('.canvas-container');
 			//初始化编辑器
-			var drawInstance = new jmDraw({
+			const drawInstance = new jmDraw({
 				container: container[0],
 				width: Math.max($(window).width() - 250, 600),
 				height: Math.max($(window).height() - 100, 400),
@@ -69,11 +76,35 @@
 			$('.js-comonent-container ul').html(comHtml);
 			bindEvent(editor);
 
-			editor.addCell('jmElement', {
-				position: {x: 0, y: 0},
+			editor.addCell(jmProcess, {
+				position: {x: 50, y: 200},
 				width: 100,
 				height: 100,
 				text: 'test'
+			});
+			editor.addCell({
+				type: 'jmElement',
+				option: {
+					shapeName: 'arc',
+					shapeParam: {
+						width: '50%',
+						height: '80%'
+					},
+					width: 200,
+					height: 200,
+					text: 'test2',
+					position: {x: 250, y: 250},
+				}
+			});
+			
+			editor.addCell({
+				type: jmDelay,
+				option: {
+					width: 100,
+					height: 100,
+					text: 'jmCyclelimit',
+					position: {x: 220, y: 100},
+				}
 			});
 		}
 

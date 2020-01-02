@@ -1,5 +1,5 @@
-import { jmControl, jmPath, jmUtils, jmList } from "../lib/jmgraph.js";
-import defaultStyle from "./defaultStyle.js";
+import { jmControl, jmPath, jmUtils, jmList } from "../../lib/jmgraph.js";
+import defaultStyle from "../defaultStyle.js";
 
 /**
  * 流程编辑器单元,继承自jmControl
@@ -50,9 +50,7 @@ import defaultStyle from "./defaultStyle.js";
 	 */
 	init(option) {
 
-		this.option = option;			
-		
-		this.text = option.text || '';
+		this.option = option;	
 		this.editor = option.editor;		
 		
 		//初始化为默认样式
@@ -162,7 +160,6 @@ import defaultStyle from "./defaultStyle.js";
 		var w = this.width;
 		var h = this.height;
 		this.center = {x:w / 2,y:h / 2};
-		var borderStyle;
 		
 		if(this.style && this.style.resize) {
 			this.rect = this.graph.createShape('resize',{
@@ -174,18 +171,20 @@ import defaultStyle from "./defaultStyle.js";
 						style: this.style.resize || defaultStyle.cell.resize });
 
 			this.rect.visible = false;
+			this.children.add(this.rect);	
 		}
 		
 		if(!this.shape) {	
-			var shapeName = this.option.shapeName || this.style.shapeName || 'rect';
-			var params = {
+			var shapeName = this.shapeType || this.option.shapeType || this.option.shapeName || this.style.shapeName || 'rect';
+			var params = Object.assign({
 				style: this.style.shape,
 				width:'100%',
 				height:'100%',
-				//center: this.center,
+				center: {x: '50%', y: '50%' },
 				position:{x: 0, y: 0}
-			};
+			}, this.option.shapeParam || {});
 			this.shape = this.graph.createShape(shapeName, params);	
+			this.children.add(this.shape);
 		}
 
 		/*if(this.connectable) {
@@ -224,8 +223,9 @@ import defaultStyle from "./defaultStyle.js";
 			style: this.style.label,
 			width:'100%',
 			height:'100%',
-			text : this.text
+			text : this.option.text || ''
 		});
+		this.children.add(this.label);	
 
 		this.setStyleName(this.styleName);
 	}	
@@ -285,8 +285,6 @@ import defaultStyle from "./defaultStyle.js";
 	 * @for jmElement
 	 */
 	add() {
-		
-		if(this.rect) this.children.add(this.rect);	
 		this.graph.children.add(this);
 		//如果可以移动
 		if(this.editor.movable) {
@@ -295,7 +293,6 @@ import defaultStyle from "./defaultStyle.js";
 		var self = this;
 		
 		if(this.shape) {
-			this.children.add(this.shape);
 
 			/*if(this.connectable) {		
 				this.shape.bind('mousemove',function() {
@@ -337,8 +334,6 @@ import defaultStyle from "./defaultStyle.js";
 			});
 		}
 		
-
-		this.children.add(this.label);	
 		this.resize();
 
 		//监听大小改变
