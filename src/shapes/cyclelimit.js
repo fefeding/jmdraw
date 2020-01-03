@@ -10,6 +10,8 @@ import jmElement from "./jmElement.js";
         option.shapeType = elementShape;// 指定图形为自定义的绘图对象
 
         super(option);
+
+        this.create();
     } 
        
 }

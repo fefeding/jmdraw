@@ -44,6 +44,7 @@
 		import jmContent from '../src/shapes/content.js';
 		import jmDB from '../src/shapes/db.js';
 		import jmDelay from '../src/shapes/delay.js';
+		import jmBezierLine from '../src/shapes/bezierLine.js';
 
 		$(function () {
 			const container = $('.canvas-container');
@@ -75,7 +76,7 @@
 			}
 			$('.js-comonent-container ul').html(comHtml);
 			bindEvent(editor);
-
+/*
 			editor.addCell(jmProcess, {
 				position: {x: 50, y: 200},
 				width: 100,
@@ -95,15 +96,18 @@
 					text: 'test2',
 					position: {x: 250, y: 250},
 				}
-			});
+			});*/
 			
 			editor.addCell({
-				type: jmDelay,
+				type: jmBezierLine,
 				option: {
-					width: 100,
-					height: 100,
-					text: 'delay',
-					position: {x: 220, y: 100},
+					shapeParam: {
+						points: [
+							{x: 290, y : 200},
+							{x: 400, y: 600},
+							{x: 800, y: 932}
+						]
+					}
 				}
 			});
 		}

@@ -94,9 +94,7 @@ import defaultStyle from "../defaultStyle.js";
 		}	
 		else {
 			this.connectable = this.editor.connectable;
-		}	
-
-		this.create();
+		}
 	}
 
 	/**
@@ -285,6 +283,7 @@ import defaultStyle from "../defaultStyle.js";
 	 * @for jmElement
 	 */
 	add() {
+
 		this.graph.children.add(this);
 		//如果可以移动
 		if(this.editor.movable) {
@@ -711,7 +710,7 @@ import defaultStyle from "../defaultStyle.js";
 		this.children.add(this.sideShape);
 	 }
 
-	 /**
+	/**
 	 * 中心点
 	 * point格式：{x:0,y:0,m:true}
 	 * @property center

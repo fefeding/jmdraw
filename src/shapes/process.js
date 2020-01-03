@@ -8,5 +8,7 @@ import jmElement from "./jmElement.js";
  export default class jmProcess extends jmElement {
 	constructor(option) {
 		super(option);
+
+        this.create();
     }    
 }
