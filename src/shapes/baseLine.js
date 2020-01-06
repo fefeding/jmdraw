@@ -1,4 +1,4 @@
-import baseShape from './baseShape.js';
+import { jmLine, jmArraw } from '../../lib/jmgraph.js';
 import jmElement from "./jmElement.js";
 
 /**
@@ -6,11 +6,14 @@ import jmElement from "./jmElement.js";
  */
  export default class jmBaseLine extends jmElement {
 	constructor(option) {        
-
+        option.shapeType = elementShape;// 指定图形为自定义的绘图对象
         super(option);
 
         this.start = option.start || {x: 0, y: 0};
         this.end = option.end || {x: 0, y: 0};
+
+        this.startArraw = !!option.startArraw;
+        this.endArraw = !!option.endArraw;
 
         this.create();
     } 	
@@ -42,6 +45,34 @@ import jmElement from "./jmElement.js";
 		this.needUpdate = true;
 		return this.__pro('end', v);
 	}
+
+	/**
+	 * 是否有开始箭头
+	 * 
+	 * @property startArraw
+	 * @type {boolean}
+	 */
+	get startArraw() {
+		return this.__pro('startArraw');
+	}
+	set startArraw(v) {
+		this.needUpdate = true;
+		return this.__pro('startArraw', v);
+	}
+
+	/**
+	 * 是否有结束箭头
+	 * 
+	 * @property endArraw
+	 * @type {boolean}
+	 */
+	get endArraw() {
+		return this.__pro('endArraw');
+	}
+	set endArraw(v) {
+		this.needUpdate = true;
+		return this.__pro('endArraw', v);
+	}
       
     //获取二点的方位，left,top,right,bottom  
     getDirection(s=this.start, e=this.end) {
@@ -58,4 +89,41 @@ import jmElement from "./jmElement.js";
             return s.y > e.y? 'righttop': 'rightbottom';//起始点X小于结束点，Y大于结束点则为右下右上
         }
     }
+}
+
+/**
+ * 绘制
+ */
+class elementShape extends jmLine {
+    constructor(params) {
+        super(params);
+        this.arrawShape = new jmArraw(params);
+    }	
+    
+    // 画直线
+    initPoints() {
+        this.points = [];
+        if(this.parent) {
+            this.start = this.parent.start;
+            this.end = this.parent.end;
+
+            
+        } 
+        this.points = super.initPoints();
+        
+        // 如果有起始箭头，用箭头计算描点，从结尾处向前计算箭头方向
+        if(this.parent && this.parent.startArraw) {
+            this.arrawShape.start = this.parent.end;
+            this.arrawShape.end = this.parent.start; 
+            this.points = this.points.concat(this.arrawShape.initPoints()); 
+        }
+        // 如果有结束箭头，顺方向计算箭头
+        if(this.parent && this.parent.endArraw) {
+            this.arrawShape.start = this.parent.start;
+            this.arrawShape.end = this.parent.end;  
+            this.points = this.points.concat(this.arrawShape.initPoints()); 
+        }
+
+        return this.points;
+    } 	
 }

@@ -44,6 +44,7 @@
 		import jmContent from '../src/shapes/content.js';
 		import jmDB from '../src/shapes/db.js';
 		import jmDelay from '../src/shapes/delay.js';
+		import jmBaseLine from '../src/shapes/baseLine.js';
 		import jmBezierLine from '../src/shapes/bezierLine.js';
 
 		$(function () {
@@ -97,7 +98,15 @@
 					position: {x: 250, y: 250},
 				}
 			});*/
-			
+			editor.addCell({
+				type: jmBaseLine,
+				option: {
+					start: {x: 120, y:200},
+					end: {x:250, y:500},
+					startArraw: true,
+					endArraw: true
+				}
+			});
 			editor.addCell({
 				type: jmBezierLine,
 				option: {
