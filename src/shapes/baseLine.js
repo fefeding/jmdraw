@@ -6,7 +6,7 @@ import jmElement from "./jmElement.js";
  */
  export default class jmBaseLine extends jmElement {
 	constructor(option) {        
-        option.shapeType = elementShape;// 指定图形为自定义的绘图对象
+        if(!option.shapeType) option.shapeType = elementShape;// 指定图形为自定义的绘图对象
         super(option);
 
         this.start = option.start || {x: 0, y: 0};
@@ -97,7 +97,10 @@ import jmElement from "./jmElement.js";
 class elementShape extends jmLine {
     constructor(params) {
         super(params);
-        this.arrawShape = new jmArraw(params);
+        // 起始箭头
+        this.startArrawShape = new jmArraw(params);
+        // 结束箭头
+        this.endArrawShape = new jmArraw(params);
     }	
     
     // 画直线
@@ -113,15 +116,15 @@ class elementShape extends jmLine {
         
         // 如果有起始箭头，用箭头计算描点，从结尾处向前计算箭头方向
         if(this.parent && this.parent.startArraw) {
-            this.arrawShape.start = this.parent.end;
-            this.arrawShape.end = this.parent.start; 
-            this.points = this.points.concat(this.arrawShape.initPoints()); 
+            this.startArrawShape.start = this.parent.end;
+            this.startArrawShape.end = this.parent.start; 
+            this.points = this.points.concat(this.startArrawShape.initPoints()); 
         }
         // 如果有结束箭头，顺方向计算箭头
         if(this.parent && this.parent.endArraw) {
-            this.arrawShape.start = this.parent.start;
-            this.arrawShape.end = this.parent.end;  
-            this.points = this.points.concat(this.arrawShape.initPoints()); 
+            this.endArrawShape.start = this.parent.start;
+            this.endArrawShape.end = this.parent.end;  
+            this.points = this.points.concat(this.endArrawShape.initPoints()); 
         }
 
         return this.points;
