@@ -7,7 +7,11 @@ import jmElement from "./jmElement.js";
  export default class jmBaseLine extends jmElement {
 	constructor(option) {        
         if(!option.shapeType) option.shapeType = elementShape;// 指定图形为自定义的绘图对象
-        super(option);
+		
+		option.resizable = false;
+		option.connectable = false;
+		
+		super(option);
 
         this.start = option.start || {x: 0, y: 0};
         this.end = option.end || {x: 0, y: 0};
@@ -88,7 +92,19 @@ import jmElement from "./jmElement.js";
         else {
             return s.y > e.y? 'righttop': 'rightbottom';//起始点X小于结束点，Y大于结束点则为右下右上
         }
-    }
+	}
+	
+	/**
+	 * 获取当前位置信息
+	 */
+	getLocation() {
+		const loc = super.getLocation();
+		loc.left = Math.min(this.start.x, this.end.x);
+		loc.top = Math.min(this.start.y, this.end.y);
+		loc.width = Math.abs(this.start.x - this.end.x);
+		loc.height = Math.abs(this.start.y - this.end.y);
+		return loc;
+	}
 }
 
 /**
@@ -100,30 +116,36 @@ class elementShape extends jmLine {
         // 起始箭头
         this.startArrawShape = new jmArraw(params);
         // 结束箭头
-        this.endArrawShape = new jmArraw(params);
+		this.endArrawShape = new jmArraw(params);
     }	
     
     // 画直线
     initPoints() {
         this.points = [];
         if(this.parent) {
-            this.start = this.parent.start;
-            this.end = this.parent.end;
-
-            
+			const loc = this.parent.getLocation();
+			this.start = Object.assign(this.start, {	
+				x: this.parent.start.x - loc.left,
+				y: this.parent.start.y - loc.top
+			});
+			this.end = Object.assign(this.end, {	
+				x: this.parent.end.x - loc.left,
+				y: this.parent.end.y - loc.top
+			});
+			
         } 
         this.points = super.initPoints();
         
         // 如果有起始箭头，用箭头计算描点，从结尾处向前计算箭头方向
         if(this.parent && this.parent.startArraw) {
-            this.startArrawShape.start = this.parent.end;
-            this.startArrawShape.end = this.parent.start; 
+            this.startArrawShape.start = this.end;
+            this.startArrawShape.end = this.start; 
             this.points = this.points.concat(this.startArrawShape.initPoints()); 
         }
         // 如果有结束箭头，顺方向计算箭头
         if(this.parent && this.parent.endArraw) {
-            this.endArrawShape.start = this.parent.start;
-            this.endArrawShape.end = this.parent.end;  
+            this.endArrawShape.start = this.start;
+            this.endArrawShape.end = this.end;  
             this.points = this.points.concat(this.endArrawShape.initPoints()); 
         }
 

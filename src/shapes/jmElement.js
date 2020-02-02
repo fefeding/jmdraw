@@ -353,7 +353,7 @@ import defaultStyle from "../defaultStyle.js";
 		}
 
 		//生成默认的连接点
-		if(this.style.connectPoint) this.createConnectPoints();
+		if(this.style.connectPoint && this.connectable) this.createConnectPoints();
 
 		//单击选当前元素
 		this.bind('mousedown',function(evt) {			
