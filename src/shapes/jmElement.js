@@ -15,6 +15,8 @@ import defaultStyle from "../defaultStyle.js";
  */
  class jmElement extends jmControl {
 	constructor(option) {
+		// 不响应操作事件，事件都交给shape处理
+		option.interactive = false;
 		super(option);
 		this.init(option);
 	}
@@ -221,7 +223,8 @@ import defaultStyle from "../defaultStyle.js";
 			style: this.style.label,
 			width:'100%',
 			height:'100%',
-			text : this.option.text || ''
+			text : this.option.text || '',
+			interactive: false // 不响应事件
 		});
 		this.children.add(this.label);	
 
@@ -286,7 +289,7 @@ import defaultStyle from "../defaultStyle.js";
 
 		this.graph.children.add(this);
 		//如果可以移动
-		if(this.editor.movable) {
+		if(this.editor && this.editor.movable) {
 			this.canMove(true);
 		}
 		var self = this;

@@ -118,7 +118,9 @@ class elementShape extends jmLine {
         // 结束箭头
 		this.endArrawShape = new jmArraw(params);
 
-		this.style.fill = this.style.stroke;
+		this.style.fill = '#000';//this.style.stroke;
+
+		this.interactive = true;
     }	
     
     // 画直线
