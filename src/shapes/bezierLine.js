@@ -25,6 +25,14 @@ import { jmBezier } from '../../lib/jmgraph.js';
 class elementShape extends jmBezier {
     constructor(params) {
         //params.style && (params.style.close = false);
-		super(params);
+        
+        super(params);
+        
+        // 起始箭头
+        this.startArrawShape = new jmArraw(params);
+        // 结束箭头
+		this.endArrawShape = new jmArraw(params);
+
+		this.style.fill = this.style.stroke;
 	}	
 }

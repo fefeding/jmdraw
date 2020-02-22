@@ -45,6 +45,18 @@ import defaultStyle from "../defaultStyle.js";
 			return this.label.text = v;
 		}
 	}
+	/**
+	 * 控件中心位置
+	 *
+	 * @property center
+	 * @type {point} 
+	 */
+	get center() {
+		return this.__pro('center');
+	}
+	set center(v) {
+		return this.__pro('center', v);
+	}
 
 	/**
 	 * 初始化组件
@@ -156,23 +168,13 @@ import defaultStyle from "../defaultStyle.js";
 	 * @private
 	 */
 	create() {
-		this.connects = new jmList();
+		if(this.shape) return;
+		
+		this.connects = this.connects || new jmList();
 		var w = this.width;
 		var h = this.height;
-		this.center = {x:w / 2,y:h / 2};
+		this.center = {x:w / 2,y:h / 2};	
 		
-		if(this.style && this.style.resize) {
-			this.rect = this.graph.createShape('resize',{
-						width:w,
-						height:h,
-						rectSize: 6,//拖放的小方块大小
-						movable:false,
-						resizable: this.resizable,
-						style: this.style.resize || defaultStyle.cell.resize });
-
-			this.rect.visible = false;
-			this.children.add(this.rect);	
-		}
 		
 		if(!this.shape) {	
 			var shapeName = this.shapeType || this.option.shapeType || this.option.shapeName || this.style.shapeName || 'rect';
@@ -185,6 +187,19 @@ import defaultStyle from "../defaultStyle.js";
 			}, this.option.shapeParam || {});
 			this.shape = this.graph.createShape(shapeName, params);	
 			this.children.add(this.shape);
+		}
+
+		if(!this.rect && this.style && this.style.resize) {
+			this.rect = this.graph.createShape('resize',{
+						width:w,
+						height:h,
+						rectSize: 6,//拖放的小方块大小
+						movable:false,
+						resizable: this.resizable,
+						style: this.style.resize || defaultStyle.cell.resize });
+
+			this.rect.visible = false;
+			this.children.add(this.rect);	
 		}
 
 		/*if(this.connectable) {
@@ -286,6 +301,7 @@ import defaultStyle from "../defaultStyle.js";
 	 * @for jmElement
 	 */
 	add() {
+		this.create();
 
 		this.graph.children.add(this);
 		//如果可以移动

@@ -77,27 +77,30 @@
 			}
 			$('.js-comonent-container ul').html(comHtml);
 			bindEvent(editor);
-/*
-			editor.addCell(jmProcess, {
+
+			/*editor.addCell(jmProcess, {
 				position: {x: 50, y: 200},
 				width: 100,
 				height: 100,
 				text: 'test'
-			});
+			});*/
+
+			
 			editor.addCell({
 				type: 'jmElement',
 				option: {
 					shapeName: 'arc',
 					shapeParam: {
-						width: '50%',
-						height: '80%'
+						width: '80%',
+						height: '99%'
 					},
 					width: 200,
 					height: 200,
 					text: 'test2',
 					position: {x: 250, y: 250},
 				}
-			});*/
+			});
+			
 			editor.addCell({
 				type: jmBaseLine,
 				option: {
@@ -107,7 +110,7 @@
 					endArraw: true
 				}
 			});
-			/*editor.addCell({
+			editor.addCell({
 				type: jmBezierLine,
 				option: {
 					shapeParam: {
@@ -117,8 +120,10 @@
 							{x: 800, y: 932}
 						]
 					}
-				}
-			});*/
+				},
+					startArraw: true,
+					endArraw: true
+			});
 		}
 
 		//绑定事件
