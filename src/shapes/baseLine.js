@@ -101,8 +101,8 @@ import jmElement from "./jmElement.js";
 		const loc = super.getLocation();
 		loc.left = Math.min(this.start.x, this.end.x);
 		loc.top = Math.min(this.start.y, this.end.y);
-		loc.width = Math.abs(this.start.x - this.end.x);
-		loc.height = Math.abs(this.start.y - this.end.y);
+		//loc.width = Math.abs(this.start.x - this.end.x);
+		//loc.height = Math.abs(this.start.y - this.end.y);
 		return loc;
 	}
 }
@@ -112,13 +112,25 @@ import jmElement from "./jmElement.js";
  */
 class elementShape extends jmLine {
     constructor(params) {
-        super(params);
-        // 起始箭头
-        this.startArrawShape = new jmArraw(params);
-        // 结束箭头
-		this.endArrawShape = new jmArraw(params);
+		super(params);
+		
+		const arrawParams = Object.assign({}, params);
+		arrawParams.style.fill = arrawParams.style.stroke;
+		arrawParams.style.shadow = '';
 
-		this.style.fill = this.style.stroke;
+        // 起始箭头
+		this.startArrawShape = new jmArraw(arrawParams);
+		this.startArrawShape.visible = false;
+        // 结束箭头
+		this.endArrawShape = new jmArraw(arrawParams);
+		this.endArrawShape.visible = false;
+
+		this.on('add', ()=>{
+			this.parent.children.add(this.startArrawShape);
+			this.parent.children.add(this.endArrawShape);
+		});
+
+		//this.style.fill = this.style.stroke;
     }	
     
     // 画直线
@@ -141,14 +153,16 @@ class elementShape extends jmLine {
         // 如果有起始箭头，用箭头计算描点，从结尾处向前计算箭头方向
         if(this.parent && this.parent.startArraw) {
             this.startArrawShape.start = this.end;
-            this.startArrawShape.end = this.start; 
-            this.points = this.points.concat(this.startArrawShape.initPoints()); 
+			this.startArrawShape.end = this.start; 
+			this.startArrawShape.visible = true;
+            //this.points = this.points.concat(this.startArrawShape.initPoints()); 
         }
         // 如果有结束箭头，顺方向计算箭头
         if(this.parent && this.parent.endArraw) {
             this.endArrawShape.start = this.start;
             this.endArrawShape.end = this.end;  
-            this.points = this.points.concat(this.endArrawShape.initPoints()); 
+			this.endArrawShape.visible = true;
+            //this.points = this.points.concat(this.endArrawShape.initPoints()); 
         }
 
         return this.points;

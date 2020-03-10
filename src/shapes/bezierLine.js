@@ -1,5 +1,5 @@
 import baseLine from './baseLine.js';
-import { jmBezier } from '../../lib/jmgraph.js';
+import { jmBezier, jmArraw } from '../../lib/jmgraph.js';
 
 /**
  * 贝赛尔曲线 元素
@@ -28,11 +28,19 @@ class elementShape extends jmBezier {
         
         super(params);
         
+        
         // 起始箭头
-        this.startArrawShape = new jmArraw(params);
+		this.startArrawShape = new jmArraw(params);
+		this.startArrawShape.visible = false;
         // 结束箭头
 		this.endArrawShape = new jmArraw(params);
+		this.endArrawShape.visible = false;
 
-		this.style.fill = this.style.stroke;
+		this.on('add', ()=>{
+			this.parent.children.add(this.startArrawShape);
+			this.parent.children.add(this.endArrawShape);
+		});
+
+		//this.style.fill = this.style.stroke;
 	}	
 }
